@@ -26,4 +26,4 @@ while ($line !== FALSE) {
 }
 
 if ($parseErrors)
-	fputs(STDERR, $parseErrors." parse errors.\n");
+	fputs(STDERR, $argv[0]." couldn't parse ".$parseErrors." lines.\n");

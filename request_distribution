@@ -1,0 +1,72 @@
+#!/usr/bin/env php
+<?php
+
+$requestTimes = array();
+$parseErrors = 0;
+
+$line = fgets(STDIN);
+while ($line !== FALSE) {
+	$line = trim($line);	
+	if (preg_match('/^.+(GET|POST) ([^\s]+).+ ([0-9]+) ([A-Za-z0-9-]+)$/', $line, $matches)) {
+		$type = $matches[1];
+		$get = $matches[2];
+		$time = round(intval($matches[3]) / 1000);  // milliseconds
+		$cookie = !empty($matches[4]);
+		
+		$logTime = round(log10($time), 1);
+		if ($time)
+			$key = sprintf('%0.1f', $logTime);
+		else
+			$key = '0.0';		
+
+		if (empty($requestTimes[$key]))
+			$requestTimes[$key] = 1;
+		else
+			$requestTimes[$key]++;
+	} else {
+		$parseErrors++;
+	}
+	
+	// next line
+	$line = fgets(STDIN);
+}
+
+ksort($requestTimes);
+reset($requestTimes);
+$min = floor(floatval(key($requestTimes)));
+end($requestTimes);
+$max = ceil(floatval(key($requestTimes))) + 0.1;
+reset($requestTimes);
+// print $min."\t".$max."\n";
+// print_r($requestTimes);
+$maxNum = max($requestTimes);
+
+for ($f = $min; $f <= $max; $f = $f + 0.1) {
+	$key = sprintf('%0.1f', $f);
+	print "10^".$key;
+	
+	$milliseconds = round(pow(10, $f));
+	
+	if (!$f)
+		$label = "< 1 ms";
+	else if ($milliseconds < 1000)
+		$label = $milliseconds." ms";
+	else
+		$label = sprintf('%0.1f', round($milliseconds/1000, 1))." s ";
+	
+	print str_pad($label, 10, " ", STR_PAD_LEFT);
+	
+	if (empty($requestTimes[$key]))
+		$num = 0;
+	else 
+		$num = $requestTimes[$key];		
+	
+	print str_pad($num, 10, " ", STR_PAD_LEFT);
+	
+	print " ";
+	print str_pad("", round($num / $maxNum * 100), '-');
+	
+	print "\n";
+}
+
+print $parseErrors." parse errors.\n";

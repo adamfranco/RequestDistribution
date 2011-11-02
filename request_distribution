@@ -39,9 +39,12 @@ if (!count($requestTimes)) {
 
 ksort($requestTimes);
 reset($requestTimes);
-$min = floor(floatval(key($requestTimes)));
+if (in_array('-min0', $argv))
+	$min = 0.0;
+else
+	$min = floatval(key($requestTimes));
 end($requestTimes);
-$max = ceil(floatval(key($requestTimes))) + 0.1;
+$max = floatval(key($requestTimes));
 reset($requestTimes);
 // print $min."\t".$max."\n";
 // print_r($requestTimes);
@@ -49,7 +52,7 @@ $maxNum = max($requestTimes);
 
 for ($f = $min; $f <= $max; $f = $f + 0.1) {
 	$key = sprintf('%0.1f', $f);
-	print "10^".$key;
+	print "10 ^ ".$key;
 	
 	$milliseconds = round(pow(10, $f));
 	

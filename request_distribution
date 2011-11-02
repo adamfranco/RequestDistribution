@@ -7,11 +7,8 @@ $parseErrors = 0;
 $line = fgets(STDIN);
 while ($line !== FALSE) {
 	$line = trim($line);	
-	if (preg_match('/^.+(GET|POST) ([^\s]+).+ ([0-9]+) ([A-Za-z0-9-]+)$/', $line, $matches)) {
-		$type = $matches[1];
-		$get = $matches[2];
-		$time = round(intval($matches[3]) / 1000);  // milliseconds
-		$cookie = !empty($matches[4]);
+	if (preg_match('/^([0-9]+)$/', $line, $matches)) {
+		$time = $matches[1];
 		
 		$logTime = round(log10($time), 1);
 		if ($time)
@@ -69,4 +66,5 @@ for ($f = $min; $f <= $max; $f = $f + 0.1) {
 	print "\n";
 }
 
-print $parseErrors." parse errors.\n";
+if ($parseErrors)
+	fputs(STDERR, $parseErrors." parse errors.\n");

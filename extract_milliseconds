@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+$parseErrors = 0;
+
+$line = fgets(STDIN);
+if ($line == FALSE) {
+	print "\n";
+	exit;
+}
+while ($line !== FALSE) {
+	$line = trim($line);	
+	if (preg_match('/^.+(GET|POST) ([^\s]+).+ ([0-9]+) ([A-Za-z0-9-]+)$/', $line, $matches)) {
+		$type = $matches[1];
+		$get = $matches[2];
+		$time = round(intval($matches[3]) / 1000);  // milliseconds
+		$cookie = !empty($matches[4]);
+		
+		print $time."\n";
+	} else {
+		$parseErrors++;
+	}
+	
+	// next line
+	$line = fgets(STDIN);
+}
+
+if ($parseErrors)
+	fputs(STDERR, $parseErrors." parse errors.\n");
